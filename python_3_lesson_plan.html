@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SJC Academy — IT Class: Coding</title>
+<style>
+  :root {
+    --bg: #f2f5f2;
+    --card: #ffffff;
+    --text: #13141f;
+    --muted: #5b6d5f;
+    --accent: #1a7a3a;
+    --accent-dark: #0f5c28;
+    --accent-light: #e8f5ed;
+    --danger: #d43535;
+    --danger-bg: #fff5f5;
+    --danger-border: #fccfcf;
+    --func-bg: #edf7f0;
+    --func-border: #b8dcc8;
+    --radius: 14px;
+    --shadow-card: 0 2px 8px rgba(0,0,0,.05), 0 8px 32px rgba(0,0,0,.055);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    padding: 2.5rem 1.5rem 3rem;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; }
+
+  /* ── HEADER ── */
+  header { text-align:center; margin-bottom:2.5rem; }
+  .header-logo { display:block; max-width:100px; height:auto; margin:0 auto .9rem; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.07); }
+  header h1 { font-size:2.2rem; font-weight:800; letter-spacing:-.02em; margin-bottom:.35rem; }
+  header h1 span { color:var(--accent); }
+  header p { color:var(--muted); font-size:1rem; font-weight:500; }
+
+  /* ── HOME: day buttons ── */
+  .home-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-top:1.5rem; }
+  @media(max-width:640px){ .home-grid{grid-template-columns:1fr;} }
+  .day-btn {
+    display:block; background:var(--card); border-radius:var(--radius); padding:2.2rem 1.5rem; text-align:center;
+    text-decoration:none; color:var(--text); box-shadow:var(--shadow-card); border-top:5px solid var(--accent);
+    transition: transform .15s, box-shadow .15s; cursor:pointer;
+  }
+  .day-btn:hover { transform:translateY(-3px); box-shadow:0 4px 16px rgba(0,0,0,.1); }
+  .day-btn .num { font-size:3rem; font-weight:800; color:var(--accent); display:block; line-height:1; }
+  .day-btn .label { font-size:1.05rem; font-weight:700; margin:.35rem 0 .2rem; }
+  .day-btn .sub { font-size:.82rem; color:var(--muted); }
+  .day-btn:nth-child(2){ border-top-color:#2a8c4a; } .day-btn:nth-child(2) .num{ color:#2a8c4a; }
+  .day-btn:nth-child(3){ border-top-color:#3aa86b; } .day-btn:nth-child(3) .num{ color:#3aa86b; }
+
+  .cheat-link { display:block; text-align:center; margin-top:2rem; color:var(--accent); font-weight:700; font-size:1rem; cursor:pointer; }
+
+  /* ── PAGE SYSTEM ── */
+  .view { display:none; }
+  .view.active { display:block; }
+
+  /* ── TOP NAV BAR ── */
+  .topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.8rem; flex-wrap:wrap; gap:.75rem; }
+  .topbar .back { color:var(--accent); font-weight:700; font-size:.95rem; cursor:pointer; border:none; background:none; }
+  .topbar .day-title { font-size:1.2rem; font-weight:750; text-align:center; flex:1; min-width:200px; }
+
+  /* page dots */
+  .page-dots { display:flex; gap:.45rem; justify-content:center; align-items:center; margin-bottom:1.8rem; flex-wrap:wrap; }
+  .page-dots .dot {
+    width:32px; height:32px; border-radius:50%; border:2px solid #c2d8c9; background:#fff; cursor:pointer;
+    font-size:.78rem; font-weight:700; color:var(--muted); display:flex; align-items:center; justify-content:center;
+    transition: all .15s;
+  }
+  .page-dots .dot.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .page-dots .dot:hover:not(.active) { border-color:var(--accent); }
+
+  /* ── PAGE CARD ── */
+  .page-card {
+    background:var(--card); border-radius:var(--radius); padding:2.2rem 2.5rem; margin-bottom:1.5rem;
+    box-shadow:var(--shadow-card); border-top:5px solid var(--accent);
+    border-left:1px solid #eef0f5; border-right:1px solid #eef0f5; border-bottom:1px solid #eef0f5;
+  }
+  .page-card h2 { font-size:1.4rem; font-weight:750; margin-bottom:.8rem; }
+  .page-card h3 { font-size:1.05rem; font-weight:700; color:var(--accent-dark); margin:1.2rem 0 .4rem; }
+
+  /* ── BOTTOM NAV ── */
+  .botnav { display:flex; justify-content:space-between; align-items:center; margin-top:.8rem; }
+  .botnav button {
+    padding:.65rem 1.4rem; border-radius:99px; font-size:.9rem; font-weight:700; cursor:pointer; border:none;
+    transition: all .15s;
+  }
+  .btn-prev { background:#eef2ee; color:var(--text); }
+  .btn-prev:hover:not(:disabled) { background:#dde5de; }
+  .btn-next { background:var(--accent); color:#fff; }
+  .btn-next:hover:not(:disabled) { background:var(--accent-dark); }
+  .botnav button:disabled { opacity:.35; cursor:default; }
+
+  /* ── FUNC BOX ── */
+  .func-box {
+    background:var(--func-bg); border:1px solid var(--func-border); border-radius:var(--radius);
+    padding:1.3rem 1.5rem; margin:1.2rem 0;
+  }
+  .func-box h4 { font-size:1.05rem; font-weight:700; color:var(--accent-dark); margin-bottom:.5rem; }
+  .func-box h4 code { font-size:1.1rem; background:#c5e0cf; padding:.1rem .35rem; border-radius:5px; color:var(--accent-dark); }
+  .func-box p { font-size:.93rem; margin-top:.5rem; }
+  .func-box table { width:100%; border-collapse:collapse; margin-top:.5rem; font-size:.91rem; }
+  .func-box th { text-align:left; background:#d2ebd9; padding:.55rem .75rem; font-size:.77rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--accent-dark); }
+  .func-box td { padding:.55rem .75rem; border-bottom:1px solid var(--func-border); vertical-align:top; }
+  .func-box tr:last-child td { border-bottom:none; }
+  .func-box td:first-child { font-family:'SF Mono','Fira Code','Cascadia Code',monospace; font-weight:600; font-size:.87rem; white-space:nowrap; }
+
+  /* ── CAUTIONS ── */
+  .cautions {
+    background:var(--danger-bg); border:1px solid var(--danger-border); border-left:5px solid var(--danger);
+    border-radius:var(--radius); padding:1.3rem 1.5rem; margin:1.2rem 0;
+  }
+  .cautions h4 { color:var(--danger); font-size:1rem; font-weight:700; margin-bottom:.6rem; }
+  .cautions>ul{list-style:none;padding:0;}
+  .cautions>ul>li{padding:.5rem 0 .5rem 1.5rem;text-indent:-1.5rem;font-size:.92rem;border-bottom:1px solid #fde2e2;}
+  .cautions>ul>li:last-child{border-bottom:none;}
+  .cautions>ul>li::before{content:"🚫  ";}
+
+  /* ── CODE ── */
+  pre {
+    background:#191a24; color:#e2e2f2; font-family:'SF Mono','Fira Code','Cascadia Code',monospace;
+    font-size:.9rem; padding:1.1rem 1.3rem; border-radius:10px; overflow-x:auto; margin:.8rem 0;
+    line-height:1.7; box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+  }
+  .kw{color:#f08c5a;font-weight:600;} .bf{color:#f0c05a;font-weight:600;}
+  .str{color:#7bd88f;} .cmt{color:#6c6f85;font-style:italic;} .op{color:#c792ea;} .num{color:#f0c05a;}
+
+  /* ── EXERCISE ── */
+  .exercise {
+    background:#f0faf3; border:1px solid #9ddbb5; border-left:5px solid #1a6b36;
+    border-radius:var(--radius); padding:1.3rem 1.5rem; margin:1.4rem 0 .5rem;
+  }
+  .exercise h4 { color:#1a6b36; font-size:1rem; font-weight:700; margin-bottom:.4rem; }
+  .exercise p { font-size:.93rem; line-height:1.75; }
+
+  .tag { display:inline-block; background:#c5e0cf; color:var(--accent-dark); font-size:.7rem; font-weight:700; padding:.15rem .65rem; border-radius:99px; margin-left:.35rem; vertical-align:middle; letter-spacing:.04em; text-transform:uppercase; }
+  hr { border:0; height:1px; background:linear-gradient(to right,transparent,#c2d8c9,transparent); margin:1.6rem 0; }
+  :not(pre)>code { background:#e2efe6; color:#1a4a2a; padding:.12rem .4rem; border-radius:5px; font-size:.87em; font-weight:550; white-space:nowrap; }
+  .cautions :not(pre)>code,.func-box :not(pre)>code{background:rgba(0,0,0,.06);}
+  footer { text-align:center; color:var(--muted); font-size:.8rem; margin-top:2.5rem; opacity:.6; }
+  .cheat-table { width:100%; border-collapse:collapse; font-size:.91rem; }
+  .cheat-table th { text-align:left; background:#c5e0cf; padding:.6rem .75rem; font-size:.76rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--accent-dark); }
+  .cheat-table td { padding:.6rem .75rem; border-bottom:1px solid #d2e8da; vertical-align:top; }
+  .cheat-table td:first-child{font-family:monospace;font-weight:600;}
+  .cheat-table tr:last-child td{border-bottom:none;}
+  @media(max-width:640px){ body{padding:1.5rem .75rem 2rem;} .page-card{padding:1.4rem 1.2rem;} .func-box,.cautions,.exercise{padding:1rem 1.1rem;} .func-box td:first-child{white-space:normal;} header h1{font-size:1.6rem;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <img class="header-logo" src="logo.jpg" alt="SJC Academy Logo">
+  <h1><span>SJC Academy</span> — IT Class: Coding</h1>
+</header>
+
+<!-- ══════════════════════════════════════════════════ HOME ══════ -->
+<div id="home" class="view active">
+  <div class="home-grid">
+    <div class="day-btn" onclick="openDay(1)">
+      <span class="num">1</span>
+      <span class="label">Talk, Remember & Ask</span>
+      <span class="sub">print() · variables · input() · arithmetic</span>
+    </div>
+    <div class="day-btn" onclick="openDay(2)">
+      <span class="num">2</span>
+      <span class="label">Type Conversion & Text</span>
+      <span class="sub">int() · str() · float() · joining strings</span>
+    </div>
+    <div class="day-btn" onclick="openDay(3)">
+      <span class="num">3</span>
+      <span class="label">Decisions & Loops</span>
+      <span class="sub">if / else · for · range()</span>
+    </div>
+  </div>
+  <div class="cheat-link" onclick="openDay(4)">📋 Master Cheat Sheet →</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ DAY VIEWS ══ -->
+<div id="day-container" class="view">
+  <div class="topbar">
+    <button class="back" onclick="goHome()">← Home</button>
+    <div class="day-title" id="day-title"></div>
+    <div style="width:60px"></div>
+  </div>
+  <div class="page-dots" id="page-dots"></div>
+  <div id="page-content"></div>
+  <div class="botnav">
+    <button class="btn-prev" id="btn-prev" onclick="prevPage()">← Previous</button>
+    <span style="font-size:.85rem;color:var(--muted);" id="page-num-label"></span>
+    <button class="btn-next" id="btn-next" onclick="nextPage()">Next →</button>
+  </div>
+</div>
+
+<footer>SJC Summer Academy · IT Class: Coding · July 2026</footer>
+
+</div><!-- /wrap -->
+
+<script>
+// ═══════════════════════════ DATA ═══════════════════════════
+const days = {
+  1: {
+    title: 'Day 1 — Talk, Remember & Ask',
+    pages: [
+      { title: 'print() — Make the Computer Talk', html: `
+        <div class="func-box">
+          <h4>🔧 Built‑in Function: <code>print()</code></h4>
+          <table>
+            <thead><tr><th>What you write</th><th>What it does</th></tr></thead>
+            <tr><td><code>print("hello")</code></td><td>Shows the word <strong>hello</strong> on the screen</td></tr>
+            <tr><td><code>print(123)</code></td><td>Shows the number <strong>123</strong> (no quotes needed for numbers)</td></tr>
+            <tr><td><code>print("Hi", "Alex")</code></td><td>Shows <strong>Hi Alex</strong> (comma adds a space)</td></tr>
+          </table>
+          <p><strong>Rule:</strong> text inside <code>" "</code> is called a <strong>string</strong>. The quotes tell Python "this is words, not code."</p>
+        </div>
+        <div class="cautions">
+          <h4>⚠️ CAUTIONS — print() mistakes</h4>
+          <ul>
+            <li><strong>Missing closing quote:</strong> <code>print("hello)</code> ❌ → Every <code>"</code> needs a partner <code>"</code>.</li>
+            <li><strong>No quotes on text:</strong> <code>print(hello)</code> ❌ → Python thinks <code>hello</code> is a variable name. Text must be quoted.</li>
+            <li><strong>Curly / smart quotes:</strong> <code>print("hello")</code> ❌ → Only straight quotes <code>"..."</code> work. Copy‑pasting from Word or iPad Notes often brings curly quotes.</li>
+            <li><strong>Wrong brackets:</strong> <code>print[ ]</code> or <code>print{ }</code> ❌ → Only <code>print(&nbsp;)</code> with round brackets.</li>
+            <li><strong>Capital P:</strong> <code>Print("hi")</code> ❌ → Python is case‑sensitive. Must be <strong>lowercase</strong> <code>print</code>.</li>
+            <li><strong>Missing brackets entirely:</strong> <code>print "hi"</code> ❌ → Brackets are required in Python 3.</li>
+          </ul>
+        </div>
+      `},
+      { title: 'Variables — Labelled Boxes', html: `
+        <div class="func-box">
+          <h4>🧠 Variables — labelled boxes that hold one piece of data</h4>
+          <table>
+            <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
+            <tr><td><code>name = "Alex"</code></td><td>Create a box called <code>name</code>, store <strong>"Alex"</strong> inside</td></tr>
+            <tr><td><code>score = 100</code></td><td>Create a box called <code>score</code>, store <strong>100</strong> inside</td></tr>
+            <tr><td><code>print(name)</code></td><td>Print what's inside <code>name</code> — <strong>no quotes</strong>, because it's a variable</td></tr>
+            <tr><td><code>name = "Bo"</code></td><td>Overwrite <code>name</code> — now it holds <strong>"Bo"</strong> instead of "Alex"</td></tr>
+          </table>
+        </div>
+        <div class="cautions">
+          <h4>⚠️ CAUTIONS — variable mistakes</h4>
+          <ul>
+            <li><strong>Spelling a variable wrong later:</strong>
+              <pre><span class="cmt"># NameError! Python looks for "nmae" — doesn't exist</span>
+name = <span class="str">"Alex"</span>
+<span class="bf">print</span>(nmae)   ❌</pre></li>
+            <li><strong>Quoting a variable name:</strong>
+              <pre>name = <span class="str">"Alex"</span>
+<span class="bf">print</span>(<span class="str">"name"</span>)   <span class="cmt"># prints the word name, NOT Alex!</span></pre>
+              No quotes = use the variable. Quotes = literal text.</li>
+            <li><strong>Capital letters matter:</strong> <code>name</code> ≠ <code>Name</code> ≠ <code>NAME</code>. These are three different boxes.</li>
+            <li><strong>Variable name can't start with a number:</strong> <code>1st_place = "me"</code> ❌ → use <code>first_place</code> instead.</li>
+          </ul>
+        </div>
+      `},
+      { title: 'input() — Ask the User Questions', html: `
+        <div class="func-box">
+          <h4>🔧 Built‑in Function: <code>input()</code></h4>
+          <table>
+            <thead><tr><th>Code</th><th>What it does</th></tr></thead>
+            <tr><td><code>input("What is your name? ")</code></td><td>Shows the question, then <strong>waits</strong> for the user to type and press Enter</td></tr>
+            <tr><td><code>name = input("Name: ")</code></td><td>Saves whatever the user typed into the variable <code>name</code></td></tr>
+          </table>
+          <p><strong>Rule:</strong> <code>input()</code> <strong>always returns a string</strong> (text), even if the user types <code>10</code> — it becomes <code>"10"</code>, not the number 10.</p>
+        </div>
+        <div class="cautions">
+          <h4>⚠️ CAUTIONS — input() mistakes</h4>
+          <ul>
+            <li><strong>Forgetting to save the answer:</strong>
+              <pre><span class="bf">input</span>(<span class="str">"What's your name? "</span>)   <span class="cmt"># asks… then throws the answer away!</span>
+<span class="bf">print</span>(<span class="str">"Hi!"</span>)                     <span class="cmt"># can't use the name — it wasn't saved</span></pre>
+              Fix: always use a variable: <code>name = input("What's your name? ")</code></li>
+            <li><strong>Thinking input gives you a number:</strong>
+              <pre>age = <span class="bf">input</span>(<span class="str">"Age: "</span>)   <span class="cmt"># user types 10 → age is the STRING "10"</span>
+<span class="bf">print</span>(age <span class="op">+</span> <span class="num">1</span>)          ❌ <span class="cmt"># TypeError! can't add 1 to a string</span></pre></li>
+            <li><strong>Forgetting the space at the end of the prompt:</strong>
+              <pre>name = <span class="bf">input</span>(<span class="str">"Name:"</span>)   <span class="cmt"># user types right next to the colon: Name:Alex</span></pre>
+              Better: <code>input("Name: ")</code> — put a space before the closing quote.</li>
+          </ul>
+        </div>
+      `},
+      { title: 'Arithmetic — Adding, Subtracting & More', html: `
+        <div class="func-box">
+          <h4>➕➖✖️➗ Arithmetic Operators</h4>
+          <table>
+            <thead><tr><th>Operator</th><th>Does</th><th>Example</th><th>Result</th></tr></thead>
+            <tr><td><code>+</code></td><td>add</td><td><code>5 + 3</code></td><td>8</td></tr>
+            <tr><td><code>-</code></td><td>subtract</td><td><code>10 - 4</code></td><td>6</td></tr>
+            <tr><td><code>*</code></td><td>multiply</td><td><code>6 * 7</code></td><td>42</td></tr>
+            <tr><td><code>/</code></td><td>divide</td><td><code>8 / 2</code></td><td>4.0</td></tr>
+          </table>
+          <p><strong>Rule:</strong> maths only works on numbers (integers). If you got the number from <code>input()</code>, wrap it with <code>int()</code> first.</p>
+        </div>
+        <div class="cautions">
+          <h4>⚠️ CAUTIONS — arithmetic mistakes</h4>
+          <ul>
+            <li><strong>Maths on input() without int():</strong>
+              <pre>num = <span class="bf">input</span>(<span class="str">"Number: "</span>)   <span class="cmt"># user types 5 → num = "5" (string)</span>
+double = num <span class="op">*</span> <span class="num">2</span>          ❌ <span class="cmt"># "5" * 2 = "55" (repeats the string!)</span></pre>
+              Fix: <code>num = int(input("Number: "))</code></li>
+            <li><strong>Joining string + number without str():</strong>
+              <pre>apples = <span class="num">5</span>
+<span class="bf">print</span>(<span class="str">"I have "</span> <span class="op">+</span> apples <span class="op">+</span> <span class="str">" apples"</span>)   ❌ <span class="cmt"># TypeError!</span></pre>
+              Fix: <code>print("I have " + str(apples) + " apples")</code></li>
+            <li><strong><code>/</code> always gives a decimal:</strong> <code>5 / 2</code> = <strong>2.5</strong>, not 2. That's fine — just know it happens.</li>
+          </ul>
+        </div>
+      `},
+    ]
+  },
+  2: {
+    title: 'Day 2 — Type Conversion & Building Sentences',
+    pages: [
+      { title: 'The 4 Data Types — What Kind of Stuff?', html: `
+        <div class="func-box">
+          <h4>📦 Everything in Python is one of 4 types</h4>
+          <p style="margin-bottom:.8rem;">Think of data types like <strong>containers</strong>. You wouldn't put soup in an envelope or a letter in a bowl. Python is the same — it needs to know what <em>kind</em> of thing you're giving it.</p>
+          <table>
+            <thead><tr><th>Type</th><th>Real‑life version</th><th>Example</th><th>How to spot it</th></tr></thead>
+            <tr>
+              <td><code>str</code><br><span style="font-size:.78rem;color:var(--muted);">string</span></td>
+              <td>A <strong>name tag</strong> — it's just words</td>
+              <td><code>"Alex"</code><br><code>"Hello!"</code><br><code>"P4"</code></td>
+              <td>Has <strong>quotes</strong> around it. Even <code>"10"</code> is a string, not a number.</td>
+            </tr>
+            <tr>
+              <td><code>int</code><br><span style="font-size:.78rem;color:var(--muted);">integer</span></td>
+              <td>A <strong>counter</strong> — whole numbers, no dots</td>
+              <td><code>10</code><br><code>0</code><br><code>-3</code><br><code>999</code></td>
+              <td>No quotes, no decimal dot. Just a plain whole number.</td>
+            </tr>
+            <tr>
+              <td><code>float</code><br><span style="font-size:.78rem;color:var(--muted);">decimal</span></td>
+              <td>A <strong>ruler</strong> — numbers with a dot</td>
+              <td><code>3.14</code><br><code>0.5</code><br><code>10.0</code></td>
+              <td>Has a <strong>decimal dot</strong>. Even <code>5.0</code> is a float, not an int.</td>
+            </tr>
+            <tr>
+              <td><code>bool</code><br><span style="font-size:.78rem;color:var(--muted);">boolean</span></td>
+              <td>A <strong>light switch</strong> — only ON or OFF</td>
+              <td><code>True</code><br><code>False</code></td>
+              <td>Only these two words exist. Capital T, capital F. Nothing else.</td>
+            </tr>
+          </table>
+        </div>
+        <div class="func-box">
+          <h4>🧪 Quick test — what type are these?</h4>
+          <table>
+            <thead><tr><th>Value</th><th>Is it a…</th><th>Why?</th></tr></thead>
+            <tr><td><code>"7"</code></td><td><strong>str</strong></td><td>Quotes! Even though it looks like a number.</td></tr>
+            <tr><td><code>7</code></td><td><strong>int</strong></td><td>No quotes, no dot. A plain whole number.</td></tr>
+            <tr><td><code>7.0</code></td><td><strong>float</strong></td><td>Has a decimal dot.</td></tr>
+            <tr><td><code>"Hello"</code></td><td><strong>str</strong></td><td>Quotes = text.</td></tr>
+            <tr><td><code>True</code></td><td><strong>bool</strong></td><td>Only True or False — that's the whole type.</td></tr>
+            <tr><td><code>False</code></td><td><strong>bool</strong></td><td>Same. Just two possible values.</td></tr>
+          </table>
+        </div>
+        <div class="cautions">
+          <h4>⚠️ Why you should care</h4>
+          <ul>
+            <li><strong>You can't add string + int:</strong> <code>"10" + 5</code> ❌ → Python says "I don't know what you mean." Convert first: <code>int("10") + 5</code> ✅</li>
+            <li><strong><code>input()</code> ALWAYS gives you a string:</strong> even if the user types <code>10</code>, you get <code>"10"</code>. If you want maths, convert it.</li>
+            <li><strong><code>True</code> / <code>False</code> are not strings:</strong> no quotes. <code>"True"</code> is a string (3 letters), <code>True</code> is a bool (on/off). They are NOT the same thing.</li>
+          </ul>
+        </div>
+        <pre><span class="cmt"># You can check ANY value's type with type()</span>
+<span class="bf">print</span>(<span class="bf">type</span>(<span class="str">"hello"</span>))   <span class="cmt"># &lt;class 'str'&gt;</span>
+<span class="bf">print</span>(<span class="bf">type</span>(<span class="num">42</span>))       <span class="cmt"># &lt;class 'int'&gt;</span>
+<span class="bf">print</span>(<span class="bf">type</span>(<span class="num">3.14</span>))     <span class="cmt"># &lt;class 'float'&gt;</span>
+<span class="bf">print</span>(<span class="bf">type</span>(<span class="kw">True</span>))     <span class="cmt"># &lt;class 'bool'&gt;</span></pre>
+      `},
+      { title: 'int(), str(), float() — Type Conversion', html: `
+        <div class="func-box">
+          <h4>🔧 Built‑in Functions: <code>int()</code>, <code>str()</code>, <code>float()</code></h4>
+          <table>
+            <thead><tr><th>Code</th><th>What it does</th></tr></thead>
+            <tr><td><code>int("10")</code></td><td>Turns the <strong>string</strong> "10" into the <strong>integer</strong> 10 so you can do maths</td></tr>
+            <tr><td><code>int("9.9")</code></td><td>❌ CRASHES — <code>int()</code> only works on whole‑number strings like <code>"5"</code></td></tr>
+            <tr><td><code>float("9.9")</code></td><td>Turns the <strong>string</strong> "9.9" into the <strong>decimal</strong> 9.9 — use this for numbers with a dot</td></tr>
+            <tr><td><code>str(10)</code></td><td>Turns the <strong>integer</strong> 10 into the <strong>string</strong> "10" so you can join it with text</td></tr>
+            <tr><td><code>str(3.14)</code></td><td>Turns the <strong>float</strong> 3.14 into the <strong>string</strong> "3.14"</td></tr>
+          </table>
+          <p><strong>Golden rule:</strong> <code>input()</code> → string. Maths → need <code>int()</code> or <code>float()</code>. Printing with text → need <code>str()</code>.</p>
+        </div>
+      `},
+      { title: 'Common Type Conversion Cautions', html: `
+        <div class="cautions">
+          <h4>⚠️ CAUTIONS — things that will BREAK your code</h4>
+          <ul>
+            <li><strong><code>int()</code> on a decimal string:</strong>
+              <pre><span class="bf">int</span>(<span class="str">"3.14"</span>)   ❌ <span class="cmt"># ValueError! int() only eats whole numbers</span></pre>
+              Fix: <code>float("3.14")</code></li>
+            <li><strong><code>int()</code> on pure text:</strong>
+              <pre><span class="bf">int</span>(<span class="str">"hello"</span>)   ❌ <span class="cmt"># ValueError! Cannot turn letters into a number</span></pre></li>
+            <li><strong>Forgetting <code>str()</code> when joining number with text via <code>+</code>:</strong>
+              <pre>age = <span class="num">10</span>
+<span class="bf">print</span>(<span class="str">"I am "</span> <span class="op">+</span> age)   ❌ <span class="cmt"># TypeError!</span></pre>
+              Fix: <code>print("I am " + str(age))</code> — or use comma instead.</li>
+            <li><strong>Forgetting <code>str()</code> on a float before <code>+</code> joining:</strong>
+              <pre>pi = <span class="num">3.14</span>
+<span class="bf">print</span>(<span class="str">"Pi is "</span> <span class="op">+</span> pi)   ❌ <span class="cmt"># TypeError!</span></pre>
+              Fix: <code>print("Pi is " + str(pi))</code></li>
+          </ul>
+        </div>
+      `},
+      { title: 'Two Ways to Join Text & Variables', html: `
+        <div class="func-box">
+          <h4>🧩 Two Ways to Join Text and Variables</h4>
+          <table>
+            <thead><tr><th>Method</th><th>Code</th><th>Notes</th></tr></thead>
+            <tr><td><strong>①&nbsp;comma</strong> in print</td><td><code>print("Hi", name, "!")</code></td><td>Auto‑adds spaces. No <code>str()</code> needed. ✅ easiest.</td></tr>
+            <tr><td><strong>②&nbsp;+</strong> gluing</td><td><code>print("Hi " + name + "!")</code></td><td>No auto‑spaces. Must <code>str()</code> all numbers. ⚠️ easy to forget.</td></tr>
+          </table>
+          <pre><span class="cmt"># Both produce the SAME output:</span>
+name = <span class="str">"Alex"</span>
+age  = <span class="num">10</span>
+
+<span class="bf">print</span>(<span class="str">"Hi"</span>, name, <span class="str">"you are"</span>, age)             <span class="cmt"># comma — easiest</span>
+<span class="bf">print</span>(<span class="str">"Hi "</span> <span class="op">+</span> name <span class="op">+</span> <span class="str">" you are "</span> <span class="op">+</span> <span class="bf">str</span>(age))  <span class="cmt"># + gluing</span></pre>
+        </div>
+      `},
+      { title: 'Put It Together — About Me Card', html: `
+        <pre><span class="cmt"># Convert types and build sentences</span>
+name    = <span class="bf">input</span>(<span class="str">"What is your name? "</span>)
+age_str = <span class="bf">input</span>(<span class="str">"How old are you? "</span>)
+age     = <span class="bf">int</span>(age_str)
+price   = <span class="bf">float</span>(<span class="bf">input</span>(<span class="str">"How much is a bubble tea? $"</span>))
+
+<span class="cmt"># Comma — easiest, auto‑spaces</span>
+<span class="bf">print</span>(<span class="str">"Hi"</span>, name, <span class="str">"next year you'll be"</span>, age <span class="op">+</span> <span class="num">1</span>)
+
+<span class="cmt"># + gluing — must str() numbers</span>
+<span class="bf">print</span>(<span class="str">"Hi "</span> <span class="op">+</span> name <span class="op">+</span> <span class="str">" next year you'll be "</span> <span class="op">+</span> <span class="bf">str</span>(age <span class="op">+</span> <span class="num">1</span>))</pre>
+        <div class="exercise">
+          <h4>📝 Exercise — About Me Card</h4>
+          <p>Write a program that:<br>
+          ① asks for name, age, and height (cm) — use <code>int()</code> for age, <code>float()</code> for height<br>
+          ② prints a 3‑line "About Me" card using <code>+</code> or commas<br>
+          ③ line 3 must do a calculation (e.g. age in months = age × 12)</p>
+        </div>
+      `}
+    ]
+  },
+  3: {
+    title: 'Day 3 — Decisions & Loops',
+    pages: [
+      { title: 'if / else — Making Decisions', html: `
+        <div class="func-box">
+          <h4>🔀 <code>if</code> / <code>else</code> — making decisions</h4>
+          <table>
+            <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
+            <tr><td><code>if x == 5:</code></td><td>If x equals 5, run the indented block below</td></tr>
+            <tr><td><code>else:</code></td><td>Otherwise, run this block instead</td></tr>
+          </table>
+          <pre><span class="kw">if</span> pw <span class="op">==</span> <span class="str">"SJC"</span>:
+    <span class="bf">print</span>(<span class="str">"🎉 You're in!"</span>)
+<span class="kw">else</span>:
+    <span class="bf">print</span>(<span class="str">"❌ Nope!"</span>)</pre>
+        </div>
+      `},
+      { title: 'Comparison Operators', html: `
+        <div class="func-box">
+          <h4>🔍 Comparison Operators — what goes inside <code>if</code></h4>
+          <table>
+            <thead><tr><th>Operator</th><th>Meaning</th><th>Example</th></tr></thead>
+            <tr><td><code>==</code></td><td>equal to</td><td><code>pw == "SJC"</code></td></tr>
+            <tr><td><code>!=</code></td><td>not equal to</td><td><code>pw != "SJC"</code></td></tr>
+            <tr><td><code>&gt;</code> <code>&lt;</code></td><td>greater / less than</td><td><code>age &gt; 10</code></td></tr>
+            <tr><td><code>&gt;=</code> <code>&lt;=</code></td><td>greater-or-equal / less-or-equal</td><td><code>score &gt;= 80</code></td></tr>
+          </table>
+          <p><strong>Remember:</strong> <code>==</code> is comparison. <code>=</code> is assignment. Never use <code>=</code> inside <code>if</code>.</p>
+        </div>
+      `},
+      { title: 'range() + for Loop', html: `
+        <div class="func-box">
+          <h4>🔧 Built‑in Function: <code>range()</code> <span class="tag">always with for</span></h4>
+          <table>
+            <thead><tr><th>Code</th><th>What it does</th></tr></thead>
+            <tr><td><code>range(5)</code></td><td>Counts 0, 1, 2, 3, 4 (5 numbers, from 0)</td></tr>
+            <tr><td><code>range(1, 6)</code></td><td>Counts 1, 2, 3, 4, 5 (start at 1, stop <em>before</em> 6)</td></tr>
+          </table>
+        </div>
+        <div class="func-box">
+          <h4>🔁 <code>for</code> loop — repeating things</h4>
+          <table>
+            <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
+            <tr><td><code>for i in range(3):</code></td><td>Repeat the indented block 3 times. <code>i</code> counts 0, 1, 2.</td></tr>
+          </table>
+          <pre><span class="kw">for</span> i <span class="kw">in</span> <span class="bf">range</span>(<span class="num">3</span>):
+    <span class="bf">print</span>(<span class="str">"Round"</span>, i <span class="op">+</span> <span class="num">1</span>)</pre>
+          <p style="font-size:.85rem;color:var(--muted);">Output: Round 1&emsp;Round 2&emsp;Round 3</p>
+        </div>
+      `},
+      { title: 'Cautions — Structure & Syntax Errors', html: `
+        <div class="cautions">
+          <h4>⚠️ CAUTIONS — things that will BREAK your code</h4>
+          <ul>
+            <li><strong>Using <code>=</code> instead of <code>==</code>:</strong>
+              <pre><span class="kw">if</span> pw <span class="op">=</span> <span class="str">"SJC"</span>:   ❌ <span class="cmt"># SyntaxError!</span></pre>
+              Fix: <code>if pw == "SJC":</code></li>
+            <li><strong>Forgetting the colon <code>:</code>:</strong>
+              <pre><span class="kw">if</span> pw <span class="op">==</span> <span class="str">"SJC"</span>   ❌ <span class="cmt"># SyntaxError! Colon missing</span></pre>
+              Fix: <code>if pw == "SJC":</code></li>
+            <li><strong>Forgetting to indent:</strong>
+              <pre><span class="kw">if</span> pw <span class="op">==</span> <span class="str">"SJC"</span>:
+<span class="bf">print</span>(<span class="str">"ok"</span>)   ❌ <span class="cmt"># IndentationError! Must push block right 4 spaces</span></pre></li>
+            <li><strong>Mixing spaces and tabs:</strong> Pick one (spaces is safest). Mixing them = <code>TabError</code> ❌</li>
+            <li><strong>Indenting top‑level code:</strong> code at the left edge must NOT be indented</li>
+            <li><strong><code>range(0)</code> runs zero times:</strong> the loop body never executes</li>
+            <li><strong><code>range()</code> stops BEFORE the end:</strong> <code>range(1,5)</code> = 1,2,3,4 — NOT 5</li>
+            <li><strong>Comparing string with integer:</strong> if <code>age = input("Age: ")</code> then <code>age > 10</code> ❌ → use <code>int(age) > 10</code></li>
+          </ul>
+        </div>
+      `},
+      { title: 'Put It Together — The Gatekeeper', html: `
+        <pre><span class="cmt"># The Gatekeeper — combines everything</span>
+name = <span class="bf">input</span>(<span class="str">"Enter your name: "</span>)
+pw   = <span class="bf">input</span>(<span class="str">"Secret password: "</span>)
+
+<span class="kw">if</span> pw <span class="op">==</span> <span class="str">"SJC2026"</span>:
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="bf">range</span>(<span class="num">3</span>):
+        <span class="bf">print</span>(<span class="str">"Welcome, "</span> <span class="op">+</span> name <span class="op">+</span> <span class="str">"!"</span>)
+<span class="kw">else</span>:
+    <span class="bf">print</span>(<span class="str">"Access denied!"</span>)</pre>
+        <div class="exercise">
+          <h4>📝 Exercise — Gatekeeper</h4>
+          <p>Build the program above. Then change the password and the number of welcome messages.</p>
+        </div>
+      `}
+    ]
+  },
+  4: {
+    title: '📋 Master Cheat Sheet',
+    pages: [
+      { title: 'All Built‑in Functions + Rules', html: `
+        <div class="func-box">
+          <table class="cheat-table">
+            <thead><tr><th style="width:28%;">Function / Syntax</th><th>Does</th><th style="width:47%;">Top cautions</th></tr></thead>
+            <tr><td><code>print(x)</code></td><td>Shows x on screen</td><td>Text needs <code>" "</code> · only <code>()</code> · lowercase <code>print</code></td></tr>
+            <tr><td><code>input("p")</code></td><td>Asks user, returns <strong>string</strong></td><td>Always string, even numbers · save to a variable</td></tr>
+            <tr><td><code>type(x)</code></td><td>Tells you the data type of x</td><td><code>type("hi")</code> → str · <code>type(5)</code> → int · <code>type(True)</code> → bool</td></tr>
+            <tr><td><code>int(x)</code></td><td>String → integer</td><td>Crashes on <code>"hello"</code> or <code>"3.14"</code></td></tr>
+            <tr><td><code>float(x)</code></td><td>String → decimal</td><td>Use for numbers with dot: <code>float("3.14")</code></td></tr>
+            <tr><td><code>str(x)</code></td><td>Int / float → string</td><td>Needed before <code>+</code> joining number + text</td></tr>
+            <tr><td><code>range(n)</code></td><td>0, 1, 2 … n‑1</td><td>Stops <em>before</em> n · <code>range(1,5)</code> = 1,2,3,4</td></tr>
+            <tr><td><code>if cond:</code></td><td>Runs block if cond true</td><td>Colon <code>:</code> · <code>==</code> not <code>=</code> · indent block</td></tr>
+            <tr><td><code>else:</code></td><td>Runs if <code>if</code> was false</td><td>Colon <code>:</code> · same indent level as <code>if</code></td></tr>
+            <tr><td><code>for x in range(n):</code></td><td>Repeats n times</td><td>Colon <code>:</code> · indent · <code>range(0)</code> = zero runs</td></tr>
+            <tr><td><code>+ - * /</code></td><td>Arithmetic</td><td>Work on int/float · <code>+</code> on strings = join</td></tr>
+          </table>
+        </div>
+        <div class="cautions" style="margin-top:.75rem;">
+          <h4>⚠️ Top 5 Beginner Errors</h4>
+          <ol style="padding-left:1.4rem; font-size:.93rem; line-height:1.9;">
+            <li><strong>Missing quotes</strong> — every <code>"</code> needs a closing <code>"</code></li>
+            <li><strong><code>=</code> vs <code>==</code></strong> — <code>=</code> is "put in box", <code>==</code> is "are they equal?"</li>
+            <li><strong>Forgetting colon <code>:</code></strong> — <code>if</code>/<code>else</code>/<code>for</code> need it</li>
+            <li><strong>Forgetting to indent</strong> — 4 spaces after <code>if:</code>/<code>else:</code>/<code>for:</code></li>
+            <li><strong>String + int without <code>str()</code></strong> — wrap numbers: <code>str(age)</code></li>
+          </ol>
+        </div>
+      `}
+    ]
+  }
+};
+
+// ═══════════════════════════ STATE ═══════════════════════════
+let currentDay = null;
+let currentPage = 0;
+
+function goHome() {
+  currentDay = null;
+  currentPage = 0;
+  document.getElementById('home').classList.add('active');
+  document.getElementById('day-container').classList.remove('active');
+}
+
+function openDay(n) {
+  currentDay = n;
+  currentPage = 0;
+  document.getElementById('home').classList.remove('active');
+  document.getElementById('day-container').classList.add('active');
+  renderDay();
+}
+
+function prevPage() {
+  if (currentPage > 0) { currentPage--; renderDay(); }
+}
+
+function nextPage() {
+  const max = days[currentDay].pages.length - 1;
+  if (currentPage < max) { currentPage++; renderDay(); }
+}
+
+function goPage(i) {
+  currentPage = i;
+  renderDay();
+}
+
+function renderDay() {
+  const d = days[currentDay];
+  document.getElementById('day-title').textContent = d.title;
+
+  // page dots
+  const dotsEl = document.getElementById('page-dots');
+  dotsEl.innerHTML = d.pages.map((p, i) =>
+    `<div class="dot${i === currentPage ? ' active' : ''}" onclick="goPage(${i})">${i + 1}</div>`
+  ).join('');
+
+  // content
+  document.getElementById('page-content').innerHTML =
+    `<div class="page-card"><h2>${d.pages[currentPage].title}</h2>${d.pages[currentPage].html}</div>`;
+
+  // label
+  document.getElementById('page-num-label').textContent =
+    `Page ${currentPage + 1} of ${d.pages.length}`;
+
+  // buttons
+  document.getElementById('btn-prev').disabled = currentPage === 0;
+  document.getElementById('btn-next').disabled = currentPage === d.pages.length - 1;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
